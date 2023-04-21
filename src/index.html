@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>My Electron App</title>
+  </head>
+  <body>
+    <div>
+      <textarea id="text" style="font-size:16px;color:black"></textarea>
+    </div>
+
+    <div>
+      <label for="fontSize">Font Size:</label>
+      <input type="number" id="fontSize" name="fontSize" value="16" min="8" max="72">
+    </div>
+
+    <div>
+      <label for="color">Font Color:</label>
+      <input type="color" id="color" name="color" value="#000000">
+    </div>
+
+    <div>
+      <label for="search">Search:</label>
+      <input type="text" id="search" name="search">
+      <button id="searchButton">Find</button>
+    </div>
+
+    <div>
+      <label for="replace">Replace:</label>
+      <input type="text" id="replace" name="replace">
+      <button id="replaceButton">Replace</button>
+    </div>
+
+    <script>
+      const text = document.getElementById('text')
+      const fontSizeInput = document.getElementById('fontSize')
+      const colorInput = document.getElementById('color')
+      const searchInput = document.getElementById('search')
+      const replaceInput = document.getElementById('replace')
+      const searchButton = document.getElementById('searchButton')
+      const replaceButton = document.getElementById('replaceButton')
+
+      fontSizeInput.addEventListener('input', () => {
+        text.style.fontSize = `${fontSizeInput.value}px`
+      })
+
+      colorInput.addEventListener('input', () => {
+        text.style.color = colorInput.value
+      })
+
+      searchButton.addEventListener('click', () => {
+        const searchText = searchInput.value
+        const textToSearch = text.value
+
+        if (!searchText) return
+
+        const index = textToSearch.indexOf(searchText)
+
+        if (index !== -1) {
+          text.setSelectionRange(index, index + searchText.length)
+        }
+      })
+
+      replaceButton.addEventListener('click', () => {
+        const searchText = searchInput.value
+        const replaceText = replaceInput.value
+        const textToSearch = text.value
+
+        if (!searchText) return
+
+        const index = textToSearch.indexOf(searchText)
+
+        if (index !== -1) {
+          const newText = textToSearch.replace(searchText, replaceText)
+          text.value = newText
+        }
+      })
+    </script>
+  </body>
+</html>
