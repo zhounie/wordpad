@@ -1,0 +1,47 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 4033668 */
+  src: url('iconfont.woff2?t=1682238083507') format('woff2'),
+       url('iconfont.woff?t=1682238083507') format('woff'),
+       url('iconfont.ttf?t=1682238083507') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-undo:before {
+  content: "\e787";
+}
+
+.icon-redo:before {
+  content: "\e788";
+}
+
+.icon-unorderedlist:before {
+  content: "\e7f4";
+}
+
+.icon-orderedlist:before {
+  content: "\e7f8";
+}
+
+.icon-align-center:before {
+  content: "\e7f7";
+}
+
+.icon-text-align-justify:before {
+  content: "\e727";
+}
+
+.icon-align-right:before {
+  content: "\e7f5";
+}
+
+.icon-align-left:before {
+  content: "\e7f6";
+}
+

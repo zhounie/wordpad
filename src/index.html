@@ -2,79 +2,125 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>My Electron App</title>
+    <title>Rich Text Editor</title>
+    <link rel="stylesheet" href="./assets/iconfont/iconfont.css">
+    <script src="./assets/iconfont/iconfont.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+      .editor {
+        border: 1px solid #ccc;
+        width: 100%;
+        height: 500px;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      .button {
+        margin-right: 5px;
+        border: none;
+        background-color: #eee;
+        padding: 5px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .toolbar {
+        border: 1px solid #ccc;
+        padding: 5px;
+        margin-bottom: 10px;
+        background-color: #f5f5f5;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .toolbar button {
+        font-size: 14px;
+      }
+      select {
+        margin-right: 5px;
+      }
+    </style>
   </head>
   <body>
-    <div>
-      <textarea id="text" style="font-size:16px;color:black"></textarea>
+    <div class="toolbar">
+      <div>
+        <button class="button" data-command="bold"><strong>B</strong></button>
+        <button class="button" data-command="italic"><em>I</em></button>
+        <button class="button" data-command="underline">U</button>
+        <button class="button" data-command="strikeThrough"><s>S</s></button>
+        <select class="button" data-command="fontName" title="Font Name">
+          <option value="Arial">Arial</option>
+          <option value="Comic Sans MS">Comic Sans MS</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Tahoma">Tahoma</option>
+          <option value="Times New Roman">Times New Roman</option>
+        </select>
+        <select class="button" data-command="fontSize" title="Font Size">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+        </select>
+        <button class="button" data-command="foreColor" title="Text Color">A</button>
+        <button class="button" data-command="hiliteColor" title="Background Color">H</button>
+        <button class="button" data-command="justifyLeft">
+          <i class="iconfont icon-align-left"></i>
+        </button>
+        <button class="button" data-command="justifyCenter">
+          <i class="iconfont icon-align-center"></i>
+        </button>
+        <button class="button" data-command="justifyRight">
+          <i class="iconfont icon-align-right"></i>
+        </button>
+        <button class="button" data-command="justifyFull">
+          <i class="iconfont icon-text-align-justify"></i>
+        </button>
+        <select class="button" data-command="indent" title="Indent">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+        </select>
+        <select class="button" data-command="lineHeight" title="Line Height">
+          <option value="1">1</option>
+          <option value="1.2">1.2</option>
+          <option value="1.5">1.5</option>
+          <option value="1.8">1.8</option>
+          <option value="2">2</option>
+        </select>
+        <button class="button" data-command="insertUnorderedList">
+          <i class="iconfont icon-unorderedlist"></i>
+        </button>
+        <button class="button" data-command="insertOrderedList">
+          <i class="iconfont icon-orderedlist"></i>
+        </button>
+        <button class="button" data-command="undo" title="Undo">
+          <i class="iconfont icon-undo"></i>
+        </button>
+        <button class="button" data-command="redo" title="Redo">
+          <i class="iconfont icon-redo"></i>
+        </button>
+      </div>
+      <div>
+        <button class="button" data-command="createLink">Link</button>
+        <button class="button" data-command="unlink">Unlink</button>
+        <input type="file" id="imageUpload" style="display:none">
+        <button class="button" data-command="insertImage" onclick="document.getElementById('imageUpload').click()">Image</button>
+      </div>
     </div>
-
-    <div>
-      <label for="fontSize">Font Size:</label>
-      <input type="number" id="fontSize" name="fontSize" value="16" min="8" max="72">
-    </div>
-
-    <div>
-      <label for="color">Font Color:</label>
-      <input type="color" id="color" name="color" value="#000000">
-    </div>
-
-    <div>
-      <label for="search">Search:</label>
-      <input type="text" id="search" name="search">
-      <button id="searchButton">Find</button>
-    </div>
-
-    <div>
-      <label for="replace">Replace:</label>
-      <input type="text" id="replace" name="replace">
-      <button id="replaceButton">Replace</button>
-    </div>
-
-    <script>
-      const text = document.getElementById('text')
-      const fontSizeInput = document.getElementById('fontSize')
-      const colorInput = document.getElementById('color')
-      const searchInput = document.getElementById('search')
-      const replaceInput = document.getElementById('replace')
-      const searchButton = document.getElementById('searchButton')
-      const replaceButton = document.getElementById('replaceButton')
-
-      fontSizeInput.addEventListener('input', () => {
-        text.style.fontSize = `${fontSizeInput.value}px`
-      })
-
-      colorInput.addEventListener('input', () => {
-        text.style.color = colorInput.value
-      })
-
-      searchButton.addEventListener('click', () => {
-        const searchText = searchInput.value
-        const textToSearch = text.value
-
-        if (!searchText) return
-
-        const index = textToSearch.indexOf(searchText)
-
-        if (index !== -1) {
-          text.setSelectionRange(index, index + searchText.length)
-        }
-      })
-
-      replaceButton.addEventListener('click', () => {
-        const searchText = searchInput.value
-        const replaceText = replaceInput.value
-        const textToSearch = text.value
-
-        if (!searchText) return
-
-        const index = textToSearch.indexOf(searchText)
-
-        if (index !== -1) {
-          const newText = textToSearch.replace(searchText, replaceText)
-          text.value = newText
-        }
-      })
-    </script>
+    <div class="editor" contenteditable="true"></div>
+    <script src="editor.js"></script>
   </body>
 </html>
