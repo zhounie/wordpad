@@ -27,7 +27,7 @@ buttons.forEach(button => {
         const reader = new FileReader()
         reader.readAsDataURL(file)
         reader.onload = function () {
-          execCommand(command, reader.result)
+          execCommand('insertHTML', `<img src='${reader.result}' style='max-width: 200px; display: inline-block' />`)
         }
       })
     } else {
