@@ -1,10 +1,7 @@
-const { dialog } = require('electron')
 
-// console.log(dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] }))
 const buttons = document.querySelectorAll('.button')
 const editor = document.querySelector('.editor')
 
-console.log(dialog);
 // 执行富文本编辑器的命令
 function execCommand (command, arg = null) {
   document.execCommand(command, false, arg)

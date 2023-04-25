@@ -1,5 +1,4 @@
 const { app, BrowserWindow } = require('electron');
-const { dialog } = require('electron')
 const path = require('path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -25,12 +24,6 @@ const createWindow = () => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
-
-  const url = dialog.showSaveDialog({
-    title: 'Insert Link',
-    message: 'Enter the URL',
-    inputPlaceholder: 'https://example.com'
-  })
 };
 
 // This method will be called when Electron has finished
