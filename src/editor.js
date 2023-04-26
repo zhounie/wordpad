@@ -1,25 +1,74 @@
-
+const bootstrap = require('bootstrap')
+const $ = require('jquery')
+const { dialog } = require('@electron/remote')
 const buttons = document.querySelectorAll('.button')
 const editor = document.querySelector('.editor')
+editor.focus()
+const myModal = new bootstrap.Modal('#staticBackdrop', {
+  keyboard: false
+})
+
+const range = window.getSelection()
+
+function onFocus () {
+  editor.focus()
+  range.selectAllChildren(editor)
+  range.collapseToEnd()
+}
+
+
 
 // 执行富文本编辑器的命令
 function execCommand (command, arg = null) {
   document.execCommand(command, false, arg)
-  editor.focus()
+  onFocus()
 }
 
 // 绑定按钮的点击事件
 buttons.forEach(button => {
+  const command = button.getAttribute('data-command')
+
+  if (command === 'foreColor') {
+    document.getElementById('myColor').addEventListener('change', function(e) {
+      execCommand(command, e.target.value)
+    })
+  }
+  if (command === 'hiliteColor') {
+    document.getElementById('bgColor').addEventListener('change', function(e) {
+      execCommand(command, e.target.value)
+    })
+  }
+  if (
+    command === 'fontSize' ||
+    command === 'fontName' ||
+    command === 'indent' ||
+    command === 'lineHeight'
+  ) {
+    button.addEventListener('change', (e) => {
+      execCommand(command, e.target.value)
+      // const command = button.getAttribute('data-command')
+      // if (command === 'createLink') {
+      //   myModal.show()
+      // } else if (command === 'insertImage') {
+      //   document.getElementById('imageUpload').addEventListener('change', function () {
+      //     const file = this.files[0]
+      //     // 读取文件内容并将其转换为base64编码格式
+      //     const reader = new FileReader()
+      //     reader.readAsDataURL(file)
+      //     reader.onload = function () {
+      //       execCommand('insertHTML', `<img src='${reader.result}' style='max-width: 200px; display: inline-block' />`)
+      //     }
+      //   })
+      // } else {
+      //   execCommand(command)
+      // }
+    })
+    return
+  }
   button.addEventListener('click', () => {
     const command = button.getAttribute('data-command')
     if (command === 'createLink') {
-      dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] })
-      // ipcRenderer.invoke('show-dialog', 'Insert Link', 'Enter the URL').then(result => {
-      //   if (result.response === 0) {
-      //     const url = result.inputValue
-      //     execCommand(command, url)
-      //   }
-      // })
+      myModal.show()
     } else if (command === 'insertImage') {
       document.getElementById('imageUpload').addEventListener('change', function () {
         const file = this.files[0]
@@ -27,7 +76,8 @@ buttons.forEach(button => {
         const reader = new FileReader()
         reader.readAsDataURL(file)
         reader.onload = function () {
-          execCommand('insertHTML', `<img src='${reader.result}' style='max-width: 200px; display: inline-block' />`)
+          onFocus()
+          execCommand('insertHTML', onGenImg(reader.result))
         }
       })
     } else {
@@ -49,3 +99,73 @@ editor.addEventListener('paste', event => {
   const text = event.clipboardData.getData('text/plain')
   document.execCommand('insertHTML', false, text)
 })
+
+function onGenImg (src) {
+  const time = new Date().getTime()
+  return `
+    <p id="${time}" style="width: 200px" class="img-box">
+      <img src='${src}' style='width: 100%'  />
+      <span id="tl" class="tl"
+        onmousedown="onDown(event, ${time})"
+        onmousemove="onMouseMoveLeft(event)"
+      ></span>
+      <span id="tr" class="tr"
+        onmousedown="onDown(event, ${time})"
+        onmousemove="onMouseMove(event)"
+      ></span>
+      <span class="bl"
+        onmousedown="onDown(event, ${time})"
+        onmousemove="onMouseMoveLeft(event)"
+      ></span>
+      <span class="br"
+        onmousedown="onDown(event, ${time})"
+        onmousemove="onMouseMove(event)"
+      ></span>
+    </p>
+    <span data-slate-node="text"></span>
+  `
+}
+
+
+function onConfirmUrl() {
+  let url = $('#recipient-name').val()
+  if (url) {
+    onFocus()
+    execCommand('createLink', url)
+  }
+  $('#recipient-name').val('')
+  myModal.hide()
+}
+
+function onChangeColor(e) {
+  execCommand(command, e.target.value)
+}
+
+
+
+let imgBox = ''
+let imgWidth = ""
+let action = false
+
+function onMouseUp () {
+  action = false
+  window.removeEventListener("mouseup", onMouseUp)
+}
+
+function onDown (e, id) {
+  window.addEventListener("mouseup", onMouseUp)
+  imgBox = document.getElementById(id)
+  imgWidth = imgBox.clientWidth
+  action = true
+}
+function onMouseMove (e) {
+  if (!action) return 
+  // console.log((imgBox.clientWidth - (start - e.x)) + 'px');
+  imgBox.style.width = (imgWidth - (imgWidth - e.x)) + 'px'
+}
+function onMouseMoveLeft (e) {
+  if (!action) return 
+  // console.log((imgBox.clientWidth - (start - e.x)) + 'px');
+  imgBox.style.width = (imgWidth - (e.x)) + 'px'
+}
+

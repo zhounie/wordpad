@@ -1,4 +1,5 @@
 const { app, BrowserWindow } = require('electron');
+// const { BrowserWindow, app } = require('@electron/remote')
 const path = require('path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -8,6 +9,8 @@ if (require('electron-squirrel-startup')) {
 
 const createWindow = () => {
   // Create the browser window.
+ 
+  require('@electron/remote/main').initialize()
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -18,12 +21,14 @@ const createWindow = () => {
       enableRemoteModule: true
     },
   });
+  
 
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+  require("@electron/remote/main").enable(mainWindow.webContents)
 };
 
 // This method will be called when Electron has finished
