@@ -3,6 +3,13 @@ const $ = require('jquery')
 const { dialog } = require('@electron/remote')
 const buttons = document.querySelectorAll('.button')
 const editor = document.querySelector('.editor')
+const findInput = document.getElementById("findInput");
+const replaceInput = document.getElementById("replaceInput");
+const findBtn = document.getElementById("findBtn");
+const replaceAllBtn = document.getElementById("replaceAllBtn");
+
+
+
 editor.focus()
 const myModal = new bootstrap.Modal('#staticBackdrop', {
   keyboard: false
@@ -182,3 +189,76 @@ function onMouseMoveLeft (e) {
   imgBox.style.width = (imgWidth - (e.x)) + 'px'
 }
 
+
+
+const editable = document.getElementById("editable");
+let currentMatch;
+
+findBtn.addEventListener("click", function() {
+  const searchTerm = findInput.value;
+  const text = editable.innerText;
+  const regex = new RegExp(searchTerm, "gi");
+  const matches = text.match(regex);
+
+  if (matches && matches.length > 0) {
+    currentMatch = 0;
+    highlightMatch(matches[currentMatch]);
+  } else {
+    currentMatch = undefined;
+    removeHighlight();
+  }
+});
+
+function highlightMatch(match) {
+  removeHighlight();
+  const range = document.createRange();
+  const start = editable.innerText.indexOf(match);
+  const end = start + match.length;
+  console.log(editable.firstChild, start);
+  range.setStart(editable.firstChild, start);
+  range.setEnd(editable.firstChild, end);
+  const highlight = document.createElement("mark");
+  range.surroundContents(highlight);
+}
+
+function removeHighlight() {
+  const highlight = editable.querySelector("mark");
+  if (highlight) {
+    const text = highlight.innerText;
+    const parent = highlight.parentNode;
+    parent.removeChild(highlight);
+    parent.appendChild(document.createTextNode(text));
+  }
+}
+
+replaceAllBtn.addEventListener("click", function() {
+  const searchTerm = findInput.value;
+  const replaceTerm = replaceInput.value;
+
+  if (currentMatch === undefined) {
+    findBtn.click();
+  }
+
+  while (currentMatch !== undefined) {
+    const node = document.createTextNode(replaceTerm);
+    const highlight = editable.querySelector("mark");
+    const parent = highlight.parentNode;
+    parent.insertBefore(node, highlight);
+    parent.removeChild(highlight);
+
+    const nextMatch = getNextMatch();
+    if (nextMatch) {
+      currentMatch = nextMatch.index;
+      highlightMatch(nextMatch[0]);
+    } else {
+      currentMatch = undefined;
+    }
+  }
+});
+
+function getNextMatch() {
+  const searchTerm = findInput.value;
+  const text = editable.innerText;
+  const regex = new RegExp(searchTerm, "gi");
+  return regex.exec(text);
+}

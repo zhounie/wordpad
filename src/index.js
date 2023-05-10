@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu } = require('electron');
 // const { BrowserWindow, app } = require('@electron/remote')
 const path = require('path');
 
@@ -29,6 +29,9 @@ const createWindow = () => {
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
   require("@electron/remote/main").enable(mainWindow.webContents)
+
+  const menu = Menu.buildFromTemplate([])
+  Menu.setApplicationMenu(menu)
 };
 
 // This method will be called when Electron has finished

@@ -14,9 +14,10 @@
       }
       .editor {
         border: 1px solid #ccc;
-        width: 100%;
+        /* width: 100%; */
         min-height: 500px;
         padding: 10px;
+        margin: 10px;
         box-sizing: border-box;
       }
       .button {
@@ -27,6 +28,20 @@
         border-radius: 3px;
         cursor: pointer;
       }
+      .button-raw {
+        margin-right: 5px;
+        border: none;
+        background-color: #eee;
+        padding: 5px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .input-raw {
+        background-color: #eee;
+        border: 1px solid #ccc;
+        padding: 2px 10px;
+      }
+
       .toolbar {
         border: 1px solid #ccc;
         padding: 5px;
@@ -163,11 +178,14 @@
         <button class="button" data-command="insertImage" onclick="document.getElementById('imageUpload').click()">添加图片</button>
       </div>
       <div>
-        
+        <input class="input-raw" type="text" id="findInput" placeholder="查找...">
+        <input class="input-raw" type="text" id="replaceInput" placeholder="替换为...">
+        <button class="button-raw" id="findBtn">查找</button>
+        <button class="button-raw" id="replaceAllBtn">全部替换</button>
       </div>
     </div>
 
-    <div class="editor" contenteditable="true"></div>
+    <div id="editable" class="editor" contenteditable="true"></div>
 
     <!-- 弹框 -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
