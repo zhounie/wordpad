@@ -21,7 +21,10 @@ function onFocus () {
 // 执行富文本编辑器的命令
 function execCommand (command, arg = null) {
   document.execCommand(command, false, arg)
-  onFocus()
+  console.log(command);
+  if (command === 'insertImage') {
+    onFocus()
+  }
 }
 
 // 绑定按钮的点击事件
@@ -32,13 +35,11 @@ buttons.forEach(button => {
     document.getElementById('myColor').addEventListener('change', function(e) {
       execCommand(command, e.target.value)
     })
-  }
-  if (command === 'hiliteColor') {
+  } else if (command === 'hiliteColor') {
     document.getElementById('bgColor').addEventListener('change', function(e) {
       execCommand(command, e.target.value)
     })
-  }
-  if (
+  } else if (
     command === 'fontSize' ||
     command === 'fontName' ||
     command === 'indent' ||
@@ -64,27 +65,36 @@ buttons.forEach(button => {
       // }
     })
     return
-  }
-  button.addEventListener('click', () => {
-    const command = button.getAttribute('data-command')
-    if (command === 'createLink') {
-      myModal.show()
-    } else if (command === 'insertImage') {
-      document.getElementById('imageUpload').addEventListener('change', function () {
-        const file = this.files[0]
-        // 读取文件内容并将其转换为base64编码格式
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = function () {
-          onFocus()
-          execCommand('insertHTML', onGenImg(reader.result))
-        }
-      })
-    } else {
+  } else if (command == 'insertImage') {
+    button.addEventListener('click', appendImage)
+  } else if (command === 'createLink') {
+    button.addEventListener('click', appendLink)
+  } else {
+    button.addEventListener('click', () => {
       execCommand(command)
-    }
-  })
+    }) 
+  }
 })
+
+function appendImage() {
+  console.log(214124214);
+  document.getElementById('imageUpload').addEventListener('change', createImage)
+}
+
+function createImage() {
+  const file = this.files[0]
+  // 读取文件内容并将其转换为base64编码格式
+  const reader = new FileReader()
+  reader.readAsDataURL(file)
+  reader.onload = function () {
+    onFocus()
+    execCommand('insertHTML', onGenImg(reader.result))
+  }
+}
+
+function appendLink() {
+  myModal.show()
+}
 
 // 禁用浏览器默认快捷键
 editor.addEventListener('keydown', event => {
@@ -103,28 +113,31 @@ editor.addEventListener('paste', event => {
 function onGenImg (src) {
   const time = new Date().getTime()
   return `
-    <p id="${time}" style="width: 200px" class="img-box">
-      <img src='${src}' style='width: 100%'  />
-      <span id="tl" class="tl"
-        onmousedown="onDown(event, ${time})"
-        onmousemove="onMouseMoveLeft(event)"
-      ></span>
-      <span id="tr" class="tr"
-        onmousedown="onDown(event, ${time})"
-        onmousemove="onMouseMove(event)"
-      ></span>
-      <span class="bl"
-        onmousedown="onDown(event, ${time})"
-        onmousemove="onMouseMoveLeft(event)"
-      ></span>
-      <span class="br"
-        onmousedown="onDown(event, ${time})"
-        onmousemove="onMouseMove(event)"
-      ></span>
-    </p>
-    <span data-slate-node="text"></span>
+  <img src='${src}' style='width: 100px'  />
   `
 }
+
+
+// <p id="${time}" style="width: 200px" class="img-box">
+//   <img src='${src}' style='width: 100%'  />
+//   <span id="tl" class="tl"
+//     onmousedown="onDown(event, ${time})"
+//     onmousemove="onMouseMoveLeft(event)"
+//   ></span>
+//   <span id="tr" class="tr"
+//     onmousedown="onDown(event, ${time})"
+//     onmousemove="onMouseMove(event)"
+//   ></span>
+//   <span class="bl"
+//     onmousedown="onDown(event, ${time})"
+//     onmousemove="onMouseMoveLeft(event)"
+//   ></span>
+//   <span class="br"
+//     onmousedown="onDown(event, ${time})"
+//     onmousemove="onMouseMove(event)"
+//   ></span>
+// </p>
+// <span data-slate-node="text"></span>
 
 
 function onConfirmUrl() {
